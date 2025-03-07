@@ -67,8 +67,8 @@ def parse_create_table(sql):
     # 构建表格
     table = [
         "### **表名**  \n`{}`（{}）\n".format(
-            table_name_match.group(1),
-            table_comment_match.group(1) if table_comment_match else ''
+            table_comment_match.group(1) if table_comment_match else '',
+            table_name_match.group(1)
         ),
         "| 字段名 | 类型 | 长度/精度 | 允许空 | 键 | 默认值 | 说明 |",
         "|--------|------|-----------|--------|----|--------|------|"
@@ -102,19 +102,43 @@ def parse_create_table(sql):
     return '\n'.join(table)
 
 # 示例用法
-sql = """CREATE TABLE `tb_operator_record` (
-  `id` bigint(20) NOT NULL COMMENT '操作信息主键',
-  `update_type` int(11) DEFAULT NULL COMMENT '操作类型(0=账号在职状态 1=修改离职继承 2=停用账号 3=启用账号 4=修改账号信息)',
-  `update_id` bigint(20) DEFAULT NULL COMMENT '操作人id',
-  `update_name` varchar(32) DEFAULT NULL COMMENT '操作人姓名',
-  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '操作时间',
-  `on_job_state` int(11) DEFAULT NULL COMMENT '账号在职状态(0=在职 1=离职)',
-  `operator_id` bigint(20) DEFAULT NULL COMMENT '被操作人id/离职人id',
-  `operator_name` varchar(32) DEFAULT NULL COMMENT '被操作人姓名',
-  `inherit_id` bigint(20) DEFAULT NULL COMMENT '继承人id',
-  `inherit_name` varchar(32) DEFAULT NULL COMMENT '继承人姓名',
-  `shop_collect` json DEFAULT NULL COMMENT '离职前分管的客户',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;"""
+sql = """CREATE TABLE `tb_settler_info` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '入驻商id',
+  `settler_name` varchar(64) DEFAULT NULL COMMENT '入驻商名称',
+  `settler_no` varchar(22) DEFAULT NULL COMMENT '入驻商编号',
+  `settler_contract` varchar(64) DEFAULT NULL COMMENT '联系人',
+  `settler_mobile` varchar(11) DEFAULT NULL COMMENT '联系电话',
+  `fixed_number` varchar(255) DEFAULT NULL COMMENT '固定电话',
+  `login_account` varchar(64) DEFAULT NULL COMMENT '登录账号',
+  `address` varchar(255) DEFAULT NULL COMMENT '入驻商地址',
+  `settled_type` int(11) DEFAULT '0' COMMENT '入驻类型：0（默认）：经销商入驻',
+  `settled_level` int(11) DEFAULT '0' COMMENT '入驻等级：0（默认）',
+  `percentage` int(11) DEFAULT NULL COMMENT '平台手续费占比',
+  `institutions_id` bigint(20) DEFAULT NULL COMMENT '机构id',
+  `is_completed` int(11) DEFAULT '0' COMMENT '是否完善：0：（默认）未完善；1：已完善',
+  `is_proprietary` int(11) DEFAULT '1' COMMENT '是否自营 0:非自营 1:自营',
+  `is_own` int(11) DEFAULT '0' COMMENT '是否自仓（0：是；1：否）',
+  `sale_man_id` bigint(20) DEFAULT NULL COMMENT '业务员id',
+  `creator` varchar(255) DEFAULT NULL COMMENT '创建人',
+  `start_time` datetime DEFAULT NULL COMMENT '开始时间',
+  `end_time` datetime DEFAULT NULL COMMENT '结束时间',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `state` int(11) DEFAULT '0' COMMENT '状态：0：启用（默认）；1：停用',
+  `biz_user_id` varchar(50) DEFAULT NULL COMMENT '对接通联的商户号',
+  `is_settled_brands` tinyint(2) DEFAULT '0' COMMENT '是否入驻品牌  0否 1是',
+  `settled_brands_id` varchar(255) DEFAULT NULL COMMENT '入驻类目 id 逗号分割',
+  `settled_institutions` varchar(255) DEFAULT NULL COMMENT '入驻机构id 加逗号分割',
+  `freight_template_id` bigint(25) DEFAULT NULL COMMENT '商品上下架关联运费模板id',
+  `settled_shop_type` int(1) DEFAULT NULL COMMENT '1公司 2个体户',
+  `settle_account_id` bigint(20) DEFAULT NULL COMMENT '结算明细id',
+  `effective_time` datetime DEFAULT NULL COMMENT '结算规则生效时间',
+  `balance1` decimal(10,2) DEFAULT NULL COMMENT '在线支付余额',
+  `balance2` decimal(10,2) DEFAULT NULL COMMENT '在线支付通联余额',
+  `settled_type_pm` int(1) DEFAULT NULL COMMENT '1公司 2个体户 3个人入驻',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `institutions_id` (`institutions_id`),
+  KEY `state` (`state`)
+) ENGINE=InnoDB AUTO_INCREMENT=930 DEFAULT CHARSET=utf8 COMMENT='入驻商信息';"""
 
 print(parse_create_table(sql))
